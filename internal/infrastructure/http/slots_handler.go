@@ -4,9 +4,11 @@ import (
 	"avito-task/internal/contracts/usecase"
 	"avito-task/internal/domain"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -46,7 +48,7 @@ func NewSlotHandler(service usecase.SlotsUseCase) *SlotHandler {
 func (h *SlotHandler) List(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	roomIDStr := r.PathValue("roomId")
+	roomIDStr := chi.URLParam(r, "roomId")
 	roomID, err := uuid.Parse(roomIDStr)
 	if err != nil {
 		renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "invalid room uuid format")
@@ -67,8 +69,8 @@ func (h *SlotHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	slots, err := h.service.GetSlotsByRoomId(r.Context(), roomID, parsedDate)
 	if err != nil {
-		switch err {
-		case domain.ErrNotFound:
+		switch {
+		case errors.Is(err, domain.ErrNotFound):
 			renderError(w, http.StatusNotFound, ErrCodeRoomNotFound, "room not found")
 		default:
 			renderError(w, http.StatusInternalServerError, ErrCodeInternalError, "internal server error")

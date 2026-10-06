@@ -40,7 +40,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.CreateBookingRequest"
+                            "$ref": "#/definitions/http.CreateBookingRequest"
                         }
                     }
                 ],
@@ -48,43 +48,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Booking created successfully",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.BookingResponse"
+                            "$ref": "#/definitions/http.BookingResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Slot not found",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Slot already booked",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -123,31 +123,31 @@ const docTemplate = `{
                     "200": {
                         "description": "List of all bookings",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.PaginatedBookingsResponse"
+                            "$ref": "#/definitions/http.PaginatedBookingsResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid pagination parameters",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -172,25 +172,25 @@ const docTemplate = `{
                     "200": {
                         "description": "List of future bookings",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.BookingListResponse"
+                            "$ref": "#/definitions/http.BookingListResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -224,31 +224,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Booking cancelled",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.BookingResponse"
+                            "$ref": "#/definitions/http.BookingResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Booking not found",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -274,7 +274,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.DummyLoginRequest"
+                            "$ref": "#/definitions/http.DummyLoginRequest"
                         }
                     }
                 ],
@@ -282,19 +282,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.TokenResponse"
+                            "$ref": "#/definitions/http.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid role",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -320,7 +320,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.LoginRequest"
+                            "$ref": "#/definitions/http.LoginRequest"
                         }
                     }
                 ],
@@ -328,19 +328,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully authenticated",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.TokenResponse"
+                            "$ref": "#/definitions/http.TokenResponse"
                         }
                     },
                     "401": {
                         "description": "Invalid email or password",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -366,7 +366,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.RegisterRequest"
+                            "$ref": "#/definitions/http.RegisterRequest"
                         }
                     }
                 ],
@@ -376,20 +376,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
-                                "$ref": "#/definitions/internal_infrastructure_http.UserResponse"
+                                "$ref": "#/definitions/http.UserResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Invalid request or email already taken",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server data",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -419,7 +419,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.CreateRoomRequest"
+                            "$ref": "#/definitions/http.CreateRoomRequest"
                         }
                     }
                 ],
@@ -427,31 +427,31 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.RoomResponse"
+                            "$ref": "#/definitions/http.RoomResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -475,19 +475,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.RoomListResponse"
+                            "$ref": "#/definitions/http.RoomListResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -525,7 +525,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.CreateScheduleRequest"
+                            "$ref": "#/definitions/http.CreateScheduleRequest"
                         }
                     }
                 ],
@@ -533,43 +533,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Schedule created successfully",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ScheduleResponse"
+                            "$ref": "#/definitions/http.ScheduleResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid request or invalid daysOfWeek values",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Room not found",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict: schedule already exists for this room",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -610,31 +610,31 @@ const docTemplate = `{
                     "200": {
                         "description": "List of available slots",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.SlotsListResponse"
+                            "$ref": "#/definitions/http.SlotsListResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Room not found",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/internal_infrastructure_http.ErrorResponse"
+                            "$ref": "#/definitions/http.ErrorResponse"
                         }
                     }
                 }
@@ -642,7 +642,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "avito-task_internal_domain.Role": {
+        "domain.Role": {
             "type": "string",
             "enum": [
                 "admin",
@@ -653,7 +653,7 @@ const docTemplate = `{
                 "RoleUser"
             ]
         },
-        "avito-task_internal_domain.Room": {
+        "domain.Room": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -667,7 +667,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.BookingDTO": {
+        "http.BookingDTO": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -689,29 +689,29 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.BookingListResponse": {
+        "http.BookingListResponse": {
             "type": "object",
             "properties": {
                 "bookings": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_infrastructure_http.BookingDTO"
+                        "$ref": "#/definitions/http.BookingDTO"
                     }
                 },
                 "pagination": {
-                    "$ref": "#/definitions/internal_infrastructure_http.PaginatedBookingsResponse"
+                    "$ref": "#/definitions/http.PaginatedBookingsResponse"
                 }
             }
         },
-        "internal_infrastructure_http.BookingResponse": {
+        "http.BookingResponse": {
             "type": "object",
             "properties": {
                 "booking": {
-                    "$ref": "#/definitions/internal_infrastructure_http.BookingDTO"
+                    "$ref": "#/definitions/http.BookingDTO"
                 }
             }
         },
-        "internal_infrastructure_http.CreateBookingRequest": {
+        "http.CreateBookingRequest": {
             "type": "object",
             "properties": {
                 "slotId": {
@@ -719,7 +719,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.CreateRoomRequest": {
+        "http.CreateRoomRequest": {
             "type": "object",
             "properties": {
                 "capacity": {
@@ -737,7 +737,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.CreateScheduleRequest": {
+        "http.CreateScheduleRequest": {
             "type": "object",
             "properties": {
                 "daysOfWeek": {
@@ -756,7 +756,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.DummyLoginRequest": {
+        "http.DummyLoginRequest": {
             "type": "object",
             "properties": {
                 "role": {
@@ -765,11 +765,12 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.ErrorDetails": {
+        "http.ErrorDetails": {
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "INVALID_REQUEST"
                 },
                 "message": {
                     "type": "string",
@@ -777,15 +778,15 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.ErrorResponse": {
+        "http.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/internal_infrastructure_http.ErrorDetails"
+                    "$ref": "#/definitions/http.ErrorDetails"
                 }
             }
         },
-        "internal_infrastructure_http.LoginRequest": {
+        "http.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -796,7 +797,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.PaginatedBookingsResponse": {
+        "http.PaginatedBookingsResponse": {
             "type": "object",
             "properties": {
                 "page": {
@@ -810,7 +811,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.RegisterRequest": {
+        "http.RegisterRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -820,30 +821,30 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/avito-task_internal_domain.Role"
+                    "$ref": "#/definitions/domain.Role"
                 }
             }
         },
-        "internal_infrastructure_http.RoomListResponse": {
+        "http.RoomListResponse": {
             "type": "object",
             "properties": {
                 "rooms": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/avito-task_internal_domain.Room"
+                        "$ref": "#/definitions/domain.Room"
                     }
                 }
             }
         },
-        "internal_infrastructure_http.RoomResponse": {
+        "http.RoomResponse": {
             "type": "object",
             "properties": {
                 "room": {
-                    "$ref": "#/definitions/avito-task_internal_domain.Room"
+                    "$ref": "#/definitions/domain.Room"
                 }
             }
         },
-        "internal_infrastructure_http.ScheduleDTO": {
+        "http.ScheduleDTO": {
             "type": "object",
             "properties": {
                 "daysOfWeek": {
@@ -870,15 +871,15 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.ScheduleResponse": {
+        "http.ScheduleResponse": {
             "type": "object",
             "properties": {
                 "schedule": {
-                    "$ref": "#/definitions/internal_infrastructure_http.ScheduleDTO"
+                    "$ref": "#/definitions/http.ScheduleDTO"
                 }
             }
         },
-        "internal_infrastructure_http.SlotResponse": {
+        "http.SlotResponse": {
             "type": "object",
             "properties": {
                 "end": {
@@ -899,18 +900,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.SlotsListResponse": {
+        "http.SlotsListResponse": {
             "type": "object",
             "properties": {
                 "slots": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_infrastructure_http.SlotResponse"
+                        "$ref": "#/definitions/http.SlotResponse"
                     }
                 }
             }
         },
-        "internal_infrastructure_http.TokenResponse": {
+        "http.TokenResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -918,7 +919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_infrastructure_http.UserResponse": {
+        "http.UserResponse": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -933,9 +934,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/avito-task_internal_domain.Role"
+                    "$ref": "#/definitions/domain.Role"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Enter Bearer followed by a space and the JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

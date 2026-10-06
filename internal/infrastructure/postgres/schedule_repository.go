@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/lib/pq"
 )
 
@@ -35,6 +36,10 @@ func (r *SchedulePostgresRepository) Save(ctx context.Context, s *domain.Schedul
 		s.EndTime,
 	)
 
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+		return domain.ErrAlreadyExists
+	}
 	return err
 }
 

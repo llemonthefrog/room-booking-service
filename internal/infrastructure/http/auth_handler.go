@@ -63,6 +63,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user, token, err := h.authService.Register(r.Context(), req.Email, req.Password, req.Role)
 	if err != nil {
+		if errors.Is(err, domain.ErrInvalidData) {
+			renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "invalid email, password or role")
+			return
+		}
 		if errors.Is(err, domain.ErrAlreadyExists) {
 			renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "user with this email already exists")
 			return

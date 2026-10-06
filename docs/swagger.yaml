@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  avito-task_internal_domain.Role:
+  domain.Role:
     enum:
     - admin
     - user
@@ -8,7 +8,7 @@ definitions:
     x-enum-varnames:
     - RoleAdmin
     - RoleUser
-  avito-task_internal_domain.Room:
+  domain.Room:
     properties:
       createdAt:
         type: string
@@ -17,7 +17,7 @@ definitions:
       name:
         type: string
     type: object
-  internal_infrastructure_http.BookingDTO:
+  http.BookingDTO:
     properties:
       createdAt:
         example: "2024-04-04T13:00:00Z"
@@ -32,26 +32,26 @@ definitions:
       userId:
         type: string
     type: object
-  internal_infrastructure_http.BookingListResponse:
+  http.BookingListResponse:
     properties:
       bookings:
         items:
-          $ref: '#/definitions/internal_infrastructure_http.BookingDTO'
+          $ref: '#/definitions/http.BookingDTO'
         type: array
       pagination:
-        $ref: '#/definitions/internal_infrastructure_http.PaginatedBookingsResponse'
+        $ref: '#/definitions/http.PaginatedBookingsResponse'
     type: object
-  internal_infrastructure_http.BookingResponse:
+  http.BookingResponse:
     properties:
       booking:
-        $ref: '#/definitions/internal_infrastructure_http.BookingDTO'
+        $ref: '#/definitions/http.BookingDTO'
     type: object
-  internal_infrastructure_http.CreateBookingRequest:
+  http.CreateBookingRequest:
     properties:
       slotId:
         type: string
     type: object
-  internal_infrastructure_http.CreateRoomRequest:
+  http.CreateRoomRequest:
     properties:
       capacity:
         type: integer
@@ -63,7 +63,7 @@ definitions:
       name:
         type: string
     type: object
-  internal_infrastructure_http.CreateScheduleRequest:
+  http.CreateScheduleRequest:
     properties:
       daysOfWeek:
         items:
@@ -76,33 +76,34 @@ definitions:
         example: "09:00"
         type: string
     type: object
-  internal_infrastructure_http.DummyLoginRequest:
+  http.DummyLoginRequest:
     properties:
       role:
         example: user
         type: string
     type: object
-  internal_infrastructure_http.ErrorDetails:
+  http.ErrorDetails:
     properties:
       code:
+        example: INVALID_REQUEST
         type: string
       message:
         example: Detailed error message
         type: string
     type: object
-  internal_infrastructure_http.ErrorResponse:
+  http.ErrorResponse:
     properties:
       error:
-        $ref: '#/definitions/internal_infrastructure_http.ErrorDetails'
+        $ref: '#/definitions/http.ErrorDetails'
     type: object
-  internal_infrastructure_http.LoginRequest:
+  http.LoginRequest:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  internal_infrastructure_http.PaginatedBookingsResponse:
+  http.PaginatedBookingsResponse:
     properties:
       page:
         type: integer
@@ -111,28 +112,28 @@ definitions:
       total:
         type: integer
     type: object
-  internal_infrastructure_http.RegisterRequest:
+  http.RegisterRequest:
     properties:
       email:
         type: string
       password:
         type: string
       role:
-        $ref: '#/definitions/avito-task_internal_domain.Role'
+        $ref: '#/definitions/domain.Role'
     type: object
-  internal_infrastructure_http.RoomListResponse:
+  http.RoomListResponse:
     properties:
       rooms:
         items:
-          $ref: '#/definitions/avito-task_internal_domain.Room'
+          $ref: '#/definitions/domain.Room'
         type: array
     type: object
-  internal_infrastructure_http.RoomResponse:
+  http.RoomResponse:
     properties:
       room:
-        $ref: '#/definitions/avito-task_internal_domain.Room'
+        $ref: '#/definitions/domain.Room'
     type: object
-  internal_infrastructure_http.ScheduleDTO:
+  http.ScheduleDTO:
     properties:
       daysOfWeek:
         items:
@@ -151,12 +152,12 @@ definitions:
         format: date-time
         type: string
     type: object
-  internal_infrastructure_http.ScheduleResponse:
+  http.ScheduleResponse:
     properties:
       schedule:
-        $ref: '#/definitions/internal_infrastructure_http.ScheduleDTO'
+        $ref: '#/definitions/http.ScheduleDTO'
     type: object
-  internal_infrastructure_http.SlotResponse:
+  http.SlotResponse:
     properties:
       end:
         example: "2024-04-04T13:00:00Z"
@@ -171,19 +172,19 @@ definitions:
         format: date-time
         type: string
     type: object
-  internal_infrastructure_http.SlotsListResponse:
+  http.SlotsListResponse:
     properties:
       slots:
         items:
-          $ref: '#/definitions/internal_infrastructure_http.SlotResponse'
+          $ref: '#/definitions/http.SlotResponse'
         type: array
     type: object
-  internal_infrastructure_http.TokenResponse:
+  http.TokenResponse:
     properties:
       token:
         type: string
     type: object
-  internal_infrastructure_http.UserResponse:
+  http.UserResponse:
     properties:
       createdAt:
         example: "2024-04-04T13:00:00Z"
@@ -194,7 +195,7 @@ definitions:
       id:
         type: string
       role:
-        $ref: '#/definitions/avito-task_internal_domain.Role'
+        $ref: '#/definitions/domain.Role'
     type: object
 host: localhost:8080
 info:
@@ -219,23 +220,23 @@ paths:
         "200":
           description: Booking cancelled
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.BookingResponse'
+            $ref: '#/definitions/http.BookingResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Booking not found
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Cancel a booking
@@ -253,38 +254,38 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.CreateBookingRequest'
+          $ref: '#/definitions/http.CreateBookingRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Booking created successfully
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.BookingResponse'
+            $ref: '#/definitions/http.BookingResponse'
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Slot not found
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "409":
           description: Slot already booked
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create a booking for a slot
@@ -309,23 +310,23 @@ paths:
         "200":
           description: List of all bookings
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.PaginatedBookingsResponse'
+            $ref: '#/definitions/http.PaginatedBookingsResponse'
         "400":
           description: Invalid pagination parameters
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List all bookings with pagination
@@ -341,19 +342,19 @@ paths:
         "200":
           description: List of future bookings
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.BookingListResponse'
+            $ref: '#/definitions/http.BookingListResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List bookings for the current user
@@ -370,22 +371,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.DummyLoginRequest'
+          $ref: '#/definitions/http.DummyLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.TokenResponse'
+            $ref: '#/definitions/http.TokenResponse'
         "400":
           description: Invalid role
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Get string JWT token by role
       tags:
       - Auth
@@ -400,22 +401,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.LoginRequest'
+          $ref: '#/definitions/http.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Successfully authenticated
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.TokenResponse'
+            $ref: '#/definitions/http.TokenResponse'
         "401":
           description: Invalid email or password
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: User login
       tags:
       - Auth
@@ -430,7 +431,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.RegisterRequest'
+          $ref: '#/definitions/http.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -438,16 +439,16 @@ paths:
           description: User create
           schema:
             additionalProperties:
-              $ref: '#/definitions/internal_infrastructure_http.UserResponse'
+              $ref: '#/definitions/http.UserResponse'
             type: object
         "400":
           description: Invalid request or email already taken
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server data
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: User registration
       tags:
       - Auth
@@ -468,38 +469,38 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.CreateScheduleRequest'
+          $ref: '#/definitions/http.CreateScheduleRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Schedule created successfully
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ScheduleResponse'
+            $ref: '#/definitions/http.ScheduleResponse'
         "400":
           description: Invalid request or invalid daysOfWeek values
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Room not found
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "409":
           description: 'Conflict: schedule already exists for this room'
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create room availability schedule
@@ -526,23 +527,23 @@ paths:
         "200":
           description: List of available slots
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.SlotsListResponse'
+            $ref: '#/definitions/http.SlotsListResponse'
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Room not found
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List available slots for a room by date
@@ -558,30 +559,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_infrastructure_http.CreateRoomRequest'
+          $ref: '#/definitions/http.CreateRoomRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.RoomResponse'
+            $ref: '#/definitions/http.RoomResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create room
@@ -595,18 +596,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.RoomListResponse'
+            $ref: '#/definitions/http.RoomListResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_infrastructure_http.ErrorResponse'
+            $ref: '#/definitions/http.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Rooms list
       tags:
       - Rooms
+securityDefinitions:
+  BearerAuth:
+    description: Enter Bearer followed by a space and the JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -113,7 +113,12 @@ func TestSlotsService_GetSlotsByRoomId(t *testing.T) {
 			sRepo := &mockScheduleRepo{GetByRoomIDFn: tt.mockSch}
 			slRepo := &mockSlotRepo{
 				GetAvailableFn: tt.mockSlots,
-				SaveBatchFn:    func(ctx context.Context, slots []*domain.Slot) error { return nil },
+			}
+			slRepo.SaveBatchFn = func(ctx context.Context, slots []*domain.Slot) error {
+				slRepo.GetAvailableFn = func(context.Context, uuid.UUID, time.Time, time.Time) ([]*domain.Slot, error) {
+					return slots, nil
+				}
+				return nil
 			}
 
 			svc := NewSlotsService(slRepo, sRepo, rRepo)

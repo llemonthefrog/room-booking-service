@@ -92,6 +92,7 @@ func (r *SlotPostgresRepository) SaveBatch(ctx context.Context, slots []*domain.
 	query := `
 		INSERT INTO slots (id, room_id, start_at, end_at, is_booked) 
 		VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (room_id, start_at) DO NOTHING
 	`
 
 	stmt, err := tx.PrepareContext(ctx, query)

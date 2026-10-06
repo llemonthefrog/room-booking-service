@@ -22,6 +22,10 @@ import (
 // @description     API for conference room booking system.
 // @host            localhost:8080
 // @BasePath        /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter Bearer followed by a space and the JWT token.
 func main() {
 	dbUrl := os.Getenv("DATABASE_URL")
 	if dbUrl == "" {
@@ -47,6 +51,12 @@ func main() {
 	db.SetMaxOpenConns(25)
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxLifetime(5 * time.Minute)
+	pingCtx, cancelPing := context.WithTimeout(context.Background(), 5*time.Second)
+	err = db.PingContext(pingCtx)
+	cancelPing()
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
 
 	roomRepository := postgres2.NewRoomPostgresRepository(db)
 	slotRepository := postgres2.NewSlotPostgresRepository(db)
@@ -73,15 +83,19 @@ func main() {
 	)
 
 	server := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
+		Addr:              ":" + port,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
-		log.Println("Server started on :8080")
+		log.Printf("Server started on %s", server.Addr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("ListenAndServe: %v", err)
 		}

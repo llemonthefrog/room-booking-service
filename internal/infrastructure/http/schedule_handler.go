@@ -4,8 +4,10 @@ import (
 	"avito-task/internal/contracts/usecase"
 	"avito-task/internal/domain"
 	"encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -55,7 +57,7 @@ func NewScheduleHandler(service usecase.ScheduleUseCase) *ScheduleHandler {
 func (h *ScheduleHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	roomIDStr := r.PathValue("roomId")
+	roomIDStr := chi.URLParam(r, "roomId")
 	roomID, err := uuid.Parse(roomIDStr)
 	if err != nil {
 		renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "invalid room uuid format")
@@ -70,17 +72,17 @@ func (h *ScheduleHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	sch, err := h.service.Create(r.Context(), roomID, req.DaysOfWeek, req.StartTime, req.EndTime)
 	if err != nil {
-		switch err {
-		case domain.ErrNotFound:
+		switch {
+		case errors.Is(err, domain.ErrNotFound):
 			renderError(w, http.StatusNotFound, ErrCodeRoomNotFound, "room not found")
-		case domain.ErrAlreadyExists:
+		case errors.Is(err, domain.ErrAlreadyExists):
 			renderError(
 				w,
 				http.StatusConflict,
 				ErrCodeScheduleExists,
 				"schedule for this room already exists",
 			)
-		case domain.ErrInvalidData:
+		case errors.Is(err, domain.ErrInvalidData):
 			renderError(
 				w,
 				http.StatusBadRequest,

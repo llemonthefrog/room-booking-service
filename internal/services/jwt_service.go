@@ -2,10 +2,10 @@ package services
 
 import (
 	"avito-task/internal/domain"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type customClaims struct {
@@ -42,11 +42,8 @@ func (j *JWTService) GenerateToken(userID string, role domain.Role) (string, err
 
 func (j *JWTService) VerifyToken(tokenString string) (*domain.Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &customClaims{}, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
 		return []byte(j.secretKey), nil
-	})
+	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}), jwt.WithExpirationRequired())
 
 	if err != nil {
 		return nil, domain.ErrInvalidData
@@ -54,6 +51,10 @@ func (j *JWTService) VerifyToken(tokenString string) (*domain.Claims, error) {
 
 	claims, ok := token.Claims.(*customClaims)
 	if !ok || !token.Valid {
+		return nil, domain.ErrInvalidData
+	}
+	userID, err := uuid.Parse(claims.UserID)
+	if err != nil || userID == uuid.Nil || (claims.Role != string(domain.RoleUser) && claims.Role != string(domain.RoleAdmin)) {
 		return nil, domain.ErrInvalidData
 	}
 

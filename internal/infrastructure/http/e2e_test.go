@@ -75,6 +75,16 @@ func applyMigrations(t *testing.T, db *sql.DB) {
 }
 
 func setupRouter(t *testing.T) http.Handler {
+	t.Helper()
+	router, _ := setupApp(t)
+	return router
+}
+
+func setupApp(t *testing.T) (http.Handler, *sql.DB) {
+	t.Helper()
+	if testing.Short() {
+		t.Skip("E2E tests require Docker")
+	}
 	ctx := context.Background()
 
 	pgContainer, err := tcpostgres.Run(ctx,
@@ -85,7 +95,7 @@ func setupRouter(t *testing.T) http.Handler {
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
+				WithStartupTimeout(30*time.Second),
 		),
 	)
 
@@ -132,7 +142,7 @@ func setupRouter(t *testing.T) http.Handler {
 	bookingSvc := services.NewBookingService(bookingRepo, slotRepo)
 	authSvc := services.NewAuthService(jwtSecret, userRepo)
 
-	return InitRouter(jwtSvc, dummyAuthSvc, roomSvc, scheduleSvc, slotSvc, bookingSvc, authSvc)
+	return InitRouter(jwtSvc, dummyAuthSvc, roomSvc, scheduleSvc, slotSvc, bookingSvc, authSvc), db
 }
 
 func getDummyToken(t *testing.T, router http.Handler, role string) string {

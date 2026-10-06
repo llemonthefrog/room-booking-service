@@ -61,7 +61,7 @@ func TestScheduleService_Create(t *testing.T) {
 			name:   "Room Not Found",
 			roomID: roomID,
 			mockRoom: func(ctx context.Context, id uuid.UUID) (*domain.Room, error) {
-				return nil, errors.New("not found")
+				return nil, domain.ErrNotFound
 			},
 			expectError: domain.ErrNotFound,
 		},
@@ -102,10 +102,8 @@ func TestScheduleService_Create(t *testing.T) {
 
 			_, err := svc.Create(context.Background(), tt.roomID, tt.days, tt.start, tt.end)
 
-			if !errors.Is(err, tt.expectError) && err != nil && tt.expectError != nil {
-				if err.Error() != tt.expectError.Error() {
-					t.Errorf("expected error %v, got %v", tt.expectError, err)
-				}
+			if !errors.Is(err, tt.expectError) {
+				t.Errorf("expected error %v, got %v", tt.expectError, err)
 			}
 		})
 	}

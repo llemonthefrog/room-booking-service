@@ -4,6 +4,7 @@ import (
 	"avito-task/internal/contracts/repository"
 	"avito-task/internal/domain"
 	"context"
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -52,7 +53,16 @@ func (s *DummyAuthService) Login(ctx context.Context, roleStr string) (string, e
 	}
 
 	if err := s.userRepo.Create(ctx, testUser); err != nil {
-		return "", err
+		if !errors.Is(err, domain.ErrAlreadyExists) {
+			return "", err
+		}
+		existing, err := s.userRepo.GetById(ctx, userID)
+		if err != nil {
+			return "", err
+		}
+		if existing.Role != role {
+			return "", domain.ErrInvalidData
+		}
 	}
 
 	claims := jwt.MapClaims{

@@ -4,6 +4,7 @@ import (
 	"avito-task/internal/contracts/usecase"
 	"avito-task/internal/domain"
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -51,7 +52,11 @@ func (h *RoomHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	room, err := h.service.Create(r.Context(), req.Name)
 	if err != nil {
-		renderError(w, http.StatusInternalServerError, ErrCodeInternalError, err.Error())
+		if errors.Is(err, domain.ErrInvalidData) {
+			renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "room name is required")
+			return
+		}
+		renderError(w, http.StatusInternalServerError, ErrCodeInternalError, "internal server error")
 		return
 	}
 
@@ -72,7 +77,7 @@ func (h *RoomHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	rooms, err := h.service.GetList(r.Context())
 	if err != nil {
-		renderError(w, http.StatusInternalServerError, ErrCodeInternalError, err.Error())
+		renderError(w, http.StatusInternalServerError, ErrCodeInternalError, "internal server error")
 		return
 	}
 

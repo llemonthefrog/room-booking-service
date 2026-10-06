@@ -5,10 +5,12 @@ import (
 	"avito-task/internal/domain"
 	"encoding/json"
 	"errors"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -65,7 +67,11 @@ func NewBookingHandler(service usecase.BookingUseCase) *BookingHandler {
 // @Router       /bookings/create [post]
 func (h *BookingHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	uId := r.Context().Value("user_id").(uuid.UUID)
+	uId, ok := r.Context().Value(userIDKey).(uuid.UUID)
+	if !ok {
+		renderError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "authentication required")
+		return
+	}
 
 	var req CreateBookingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -140,6 +146,10 @@ func (h *BookingHandler) List(w http.ResponseWriter, r *http.Request) {
 		pageSize = ps
 	}
 
+	if page-1 > math.MaxInt/pageSize {
+		renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "page is too large")
+		return
+	}
 	offset := (page - 1) * pageSize
 
 	books, total, err := h.service.GetAll(r.Context(), pageSize, offset)
@@ -178,7 +188,11 @@ func (h *BookingHandler) List(w http.ResponseWriter, r *http.Request) {
 // @Router       /bookings/my [get]
 func (h *BookingHandler) UserList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	uId, _ := r.Context().Value("user_id").(uuid.UUID)
+	uId, ok := r.Context().Value(userIDKey).(uuid.UUID)
+	if !ok {
+		renderError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "authentication required")
+		return
+	}
 
 	books, err := h.service.GetUserBookings(r.Context(), uId)
 	if err != nil {
@@ -211,9 +225,13 @@ func (h *BookingHandler) UserList(w http.ResponseWriter, r *http.Request) {
 // @Router       /bookings/{bookingId}/cancel [post]
 func (h *BookingHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	uId, _ := r.Context().Value("user_id").(uuid.UUID)
+	uId, ok := r.Context().Value(userIDKey).(uuid.UUID)
+	if !ok {
+		renderError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "authentication required")
+		return
+	}
 
-	bIdStr := r.PathValue("bookingId")
+	bIdStr := chi.URLParam(r, "bookingId")
 	bId, err := uuid.Parse(bIdStr)
 	if err != nil {
 		renderError(w, http.StatusBadRequest, ErrCodeInvalidRequest, "invalid booking uuid")
@@ -222,8 +240,10 @@ func (h *BookingHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 
 	booking, err := h.service.Cancel(r.Context(), uId, bId)
 	if err != nil {
-		switch err {
-		case domain.ErrNotFound:
+		switch {
+		case errors.Is(err, domain.ErrDomainValidation):
+			renderError(w, http.StatusForbidden, ErrCodeForbidden, "access denied")
+		case errors.Is(err, domain.ErrNotFound):
 			renderError(
 				w,
 				http.StatusNotFound,
@@ -235,7 +255,7 @@ func (h *BookingHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 				w,
 				http.StatusInternalServerError,
 				ErrCodeInternalError,
-				err.Error(),
+				"internal server error",
 			)
 		}
 		return

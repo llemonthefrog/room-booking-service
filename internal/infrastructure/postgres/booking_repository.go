@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 )
 
 type BookingPostgresRepository struct {
@@ -37,12 +36,7 @@ func (r *BookingPostgresRepository) Create(ctx context.Context, b *domain.Book) 
 		b.SlotId,
 	)
 	if err != nil {
-		if pgErr, ok := err.(*pq.Error); ok {
-			if pgErr.Code == "23505" {
-				return domain.ErrAlreadyExists
-			}
-		}
-		return fmt.Errorf("failed to insert booking: %w", err)
+		return fmt.Errorf("failed to reserve slot: %w", err)
 	}
 
 	rows, err := res.RowsAffected()
@@ -177,5 +171,5 @@ func (r *BookingPostgresRepository) scanBookings(rows *sql.Rows) ([]*domain.Book
 		}
 		bookings = append(bookings, b)
 	}
-	return bookings, nil
+	return bookings, rows.Err()
 }

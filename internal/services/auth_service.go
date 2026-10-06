@@ -29,6 +29,9 @@ func (s *AuthService) Register(
 	password string,
 	role domain.Role,
 ) (*domain.User, string, error) {
+	if len(password) == 0 || len(password) > 72 {
+		return nil, "", domain.ErrInvalidData
+	}
 	hashBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, "", err
@@ -43,17 +46,12 @@ func (s *AuthService) Register(
 		return nil, "", err
 	}
 
-	user, err := s.userRepo.GetByEmail(ctx, email)
+	token, err := s.generateToken(newUser)
 	if err != nil {
 		return nil, "", err
 	}
 
-	token, err := s.generateToken(user)
-	if err != nil {
-		return nil, "", err
-	}
-
-	return user, token, nil
+	return newUser, token, nil
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (string, error) {

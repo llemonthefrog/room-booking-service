@@ -4,6 +4,7 @@ import (
 	"avito-task/internal/contracts/repository"
 	"avito-task/internal/domain"
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,10 +32,13 @@ func (s *ScheduleService) Create(
 	start, end string,
 ) (*domain.Schedule, error) {
 	if _, err := s.roomRepo.GetByID(ctx, roomID); err != nil {
-		return nil, domain.ErrNotFound
+		return nil, err
 	}
 
-	existing, _ := s.scheduleRepo.GetByRoomID(ctx, roomID)
+	existing, err := s.scheduleRepo.GetByRoomID(ctx, roomID)
+	if err != nil && !errors.Is(err, domain.ErrNotFound) {
+		return nil, err
+	}
 	if existing != nil {
 		return nil, domain.ErrAlreadyExists
 	}

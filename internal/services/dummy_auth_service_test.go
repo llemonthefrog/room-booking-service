@@ -109,3 +109,30 @@ func TestDummyAuthService_Login(t *testing.T) {
 		})
 	}
 }
+
+func TestDummyLoginExistingUser(t *testing.T) {
+	for _, tt := range []struct {
+		name      string
+		user      *domain.User
+		err       error
+		wantToken bool
+	}{
+		{"same user", &domain.User{Id: DummyUserId, Role: domain.RoleUser}, nil, true},
+		{"email belongs to another user", nil, domain.ErrNotFound, false},
+		{"wrong role", &domain.User{Id: DummyUserId, Role: domain.RoleAdmin}, nil, false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := &mockUserRepo{
+				CreateFn:  func(context.Context, *domain.User) error { return domain.ErrAlreadyExists },
+				GetByIdFn: func(context.Context, uuid.UUID) (*domain.User, error) { return tt.user, tt.err },
+			}
+			token, err := NewDummyAuthService("secret", repo).Login(context.Background(), "user")
+			if tt.wantToken && (err != nil || token == "") {
+				t.Fatalf("token = %q, error = %v", token, err)
+			}
+			if !tt.wantToken && (err == nil || token != "") {
+				t.Fatalf("unexpected token = %q, error = %v", token, err)
+			}
+		})
+	}
+}

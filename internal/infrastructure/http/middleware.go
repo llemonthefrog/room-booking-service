@@ -10,15 +10,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type Middleware func(handler http.Handler) http.Handler
+type contextKey string
 
-func Chain(h http.Handler, middlewares ...Middleware) http.Handler {
-	for i := len(middlewares) - 1; i >= 0; i-- {
-		h = middlewares[i](h)
-	}
-
-	return h
-}
+const (
+	userIDKey contextKey = "user_id"
+	roleKey   contextKey = "role"
+)
 
 func AuthMiddleware(verifier usecase.JWTUseCase) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -34,8 +31,8 @@ func AuthMiddleware(verifier usecase.JWTUseCase) func(http.Handler) http.Handler
 				return
 			}
 
-			parts := strings.Split(authHeader, " ")
-			if len(parts) != 2 || parts[0] != "Bearer" {
+			parts := strings.Fields(authHeader)
+			if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
 				renderError(
 					w,
 					http.StatusUnauthorized,
@@ -69,8 +66,8 @@ func AuthMiddleware(verifier usecase.JWTUseCase) func(http.Handler) http.Handler
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), "user_id", parsedUid)
-			ctx = context.WithValue(ctx, "role", string(claims.Role))
+			ctx := context.WithValue(r.Context(), userIDKey, parsedUid)
+			ctx = context.WithValue(ctx, roleKey, claims.Role)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -80,9 +77,9 @@ func AuthMiddleware(verifier usecase.JWTUseCase) func(http.Handler) http.Handler
 func RoleMiddleware(requiredRole domain.Role) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			role, ok := r.Context().Value("role").(string)
+			role, ok := r.Context().Value(roleKey).(domain.Role)
 
-			if !ok || role != string(requiredRole) {
+			if !ok || role != requiredRole {
 				w.Header().Set("Content-Type", "application/json")
 				renderError(w, http.StatusForbidden, ErrCodeForbidden, "access denied")
 				return

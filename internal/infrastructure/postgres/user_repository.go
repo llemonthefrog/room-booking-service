@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lib/pq"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type UserPostgresRepository struct {
@@ -81,7 +81,8 @@ func (repo *UserPostgresRepository) Create(ctx context.Context, user *domain.Use
 	)
 
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return domain.ErrAlreadyExists
 		}
 		return err

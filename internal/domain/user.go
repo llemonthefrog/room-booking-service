@@ -28,7 +28,7 @@ func NewUser(email string, passwordHash string, role Role) (*User, error) {
 		return nil, ErrDomainValidation
 	}
 
-	if !strings.Contains(email, "@") {
+	if !strings.Contains(email, "@") || (role != RoleAdmin && role != RoleUser) {
 		return nil, ErrInvalidData
 	}
 

@@ -5,6 +5,9 @@ import (
 	"avito-task/internal/domain"
 	"net/http"
 
+	_ "avito-task/docs"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -16,8 +19,9 @@ func InitRouter(
 	slotsUseCase usecase.SlotsUseCase,
 	bookingUseCase usecase.BookingUseCase,
 	authUseCase usecase.AuthUseCase,
-) *http.ServeMux {
-	mux := http.NewServeMux()
+) http.Handler {
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID, middleware.Logger, middleware.Recoverer)
 
 	dummyAuthHandler := NewDummyAuthHandler(dummyAuthUseCase)
 	authHandler := NewAuthHandler(authUseCase)
@@ -26,70 +30,38 @@ func InitRouter(
 	slotHandler := NewSlotHandler(slotsUseCase)
 	bookingHandler := NewBookingHandler(bookingUseCase)
 
-	authMiddleware := AuthMiddleware(jwtUseCase)
-	adminRoleMiddleware := RoleMiddleware(domain.RoleAdmin)
-	userRoleMiddleware := RoleMiddleware(domain.RoleUser)
-
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
-
-	mux.HandleFunc("GET /_info", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/_info", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
+	r.Get("/swagger", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/swagger/index.html", http.StatusMovedPermanently)
+	})
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
+	r.Post("/dummyLogin", dummyAuthHandler.Login)
+	r.Post("/register", authHandler.Register)
+	r.Post("/login", authHandler.Login)
 
-	mux.Handle("GET /swagger/", httpSwagger.WrapHandler)
+	r.Group(func(r chi.Router) {
+		r.Use(AuthMiddleware(jwtUseCase))
+		r.Get("/rooms/list", roomHandler.List)
+		r.Get("/rooms/{roomId}/slots/list", slotHandler.List)
 
-	mux.Handle("POST /dummyLogin", http.HandlerFunc(dummyAuthHandler.Login))
+		r.Group(func(r chi.Router) {
+			r.Use(RoleMiddleware(domain.RoleAdmin))
+			r.Post("/rooms/create", roomHandler.Create)
+			r.Post("/rooms/{roomId}/schedule/create", scheduleHandler.Create)
+			r.Get("/bookings/list", bookingHandler.List)
+		})
+		r.Group(func(r chi.Router) {
+			r.Use(RoleMiddleware(domain.RoleUser))
+			r.Post("/bookings/create", bookingHandler.Create)
+			r.Get("/bookings/my", bookingHandler.UserList)
+			r.Post("/bookings/{bookingId}/cancel", bookingHandler.Cancel)
+		})
+	})
 
-	mux.Handle("POST /register", http.HandlerFunc(authHandler.Register))
-	mux.Handle("POST /login", http.HandlerFunc(authHandler.Login))
-
-	mux.Handle("GET /rooms/list", Chain(
-		http.HandlerFunc(roomHandler.List),
-		authMiddleware,
-	))
-
-	mux.Handle("POST /rooms/create", Chain(
-		http.HandlerFunc(roomHandler.Create),
-		authMiddleware,
-		adminRoleMiddleware,
-	))
-
-	mux.Handle("POST /rooms/{roomId}/schedule/create", Chain(
-		http.HandlerFunc(scheduleHandler.Create),
-		authMiddleware,
-		adminRoleMiddleware,
-	))
-
-	mux.Handle("GET /rooms/{roomId}/slots/list", Chain(
-		http.HandlerFunc(slotHandler.List),
-		authMiddleware,
-	))
-
-	mux.Handle("POST /bookings/create", Chain(
-		http.HandlerFunc(bookingHandler.Create),
-		authMiddleware,
-		userRoleMiddleware,
-	))
-
-	mux.Handle("GET /bookings/list", Chain(
-		http.HandlerFunc(bookingHandler.List),
-		authMiddleware,
-		adminRoleMiddleware,
-	))
-
-	mux.Handle("GET /bookings/my", Chain(
-		http.HandlerFunc(bookingHandler.UserList),
-		authMiddleware,
-		userRoleMiddleware,
-	))
-
-	mux.Handle("POST /bookings/{bookingId}/cancel", Chain(
-		http.HandlerFunc(bookingHandler.Cancel),
-		authMiddleware,
-		userRoleMiddleware,
-	))
-
-	return mux
+	return r
 }

@@ -26,7 +26,7 @@ func NewBookingService(
 func (s *BookingService) Create(ctx context.Context, userId, slotId uuid.UUID) (*domain.Book, error) {
 	_, err := s.slotRepo.GetById(ctx, slotId)
 	if err != nil {
-		return nil, domain.ErrNotFound
+		return nil, err
 	}
 
 	booking, err := domain.NewBook(userId, slotId)
@@ -47,12 +47,11 @@ func (s *BookingService) Cancel(ctx context.Context, userId, bookingId uuid.UUID
 		return nil, err
 	}
 
-	if booking.Status == domain.StatusCancelled {
-		return booking, nil
-	}
-
 	if err := booking.IsAllowed(userId); err != nil {
 		return nil, err
+	}
+	if booking.Status == domain.StatusCancelled {
+		return booking, nil
 	}
 
 	if err := s.bookingRepo.Cancel(ctx, bookingId); err != nil {

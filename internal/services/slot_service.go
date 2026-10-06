@@ -34,7 +34,7 @@ func (s *SlotsService) GetSlotsByRoomId(ctx context.Context, room uuid.UUID, dat
 	dayEnd := dayStart.AddDate(0, 0, 1)
 
 	if _, err := s.roomRepo.GetByID(ctx, room); err != nil {
-		return nil, domain.ErrNotFound
+		return nil, err
 	}
 
 	sch, err := s.scheduleRepo.GetByRoomID(ctx, room)
@@ -56,12 +56,12 @@ func (s *SlotsService) GetSlotsByRoomId(ctx context.Context, room uuid.UUID, dat
 	}
 
 	if len(existingSlots) == 0 {
-		generated, err := s.generateAndSaveSlots(ctx, room, dayStart, sch)
-		if err != nil {
+		if _, err := s.generateAndSaveSlots(ctx, room, dayStart, sch); err != nil {
 			return nil, err
 		}
 
-		return generated, nil
+		// Another request may have generated or booked these slots already.
+		return s.slotsRepo.GetAvailable(ctx, room, dayStart, dayEnd)
 	}
 
 	available := make([]*domain.Slot, 0)
